@@ -35,6 +35,10 @@ class Nmap
 
     private $treatHostsAsOnline = false;
 
+    private $hostDiscoveryPort;
+	
+	private $hostDiscoveryFlag;
+
     private $executable;
 
     /**
@@ -102,6 +106,10 @@ class Nmap
         if (true == $this->treatHostsAsOnline) {
             $options[] = '-Pn';
         }
+		
+		if ($this->hostDiscoveryFlag !== null) {
+			$options[] = $this->hostDiscoveryFlag . $this->hostDiscoveryPort;
+		}
 
         $options[] = '-oX';
         $command   = sprintf('%s %s %s %s',
@@ -188,6 +196,19 @@ class Nmap
     public function treatHostsAsOnline($disable = true)
     {
         $this->treatHostsAsOnline = $disable;
+
+        return $this;
+    }
+
+    /**
+     * @param int $port
+     *
+     * @return Nmap
+     */
+    public function setTcpSynHostDiscovery($port)
+    {
+        $this->hostDiscoveryPort = $port;
+		$this->hostDiscoveryFlag = '-PS';
 
         return $this;
     }

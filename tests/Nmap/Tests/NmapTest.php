@@ -205,6 +205,22 @@ class NmapTest extends TestCase
         $hosts = $nmap->treatHostsAsOnline()->scan(array('williamdurand.fr'));
     }
 
+    public function testScanWithTcpSynHostDiscovery()
+    {
+        $outputFile = __DIR__ . '/Fixtures/test_scan_with_tcp_syn_host_discovery.xml';
+        $expectedCommand = sprintf("nmap -PS80 -oX '%s' 'williamdurand.fr'", $outputFile);
+
+        $executor = $this->getProcessExecutorMock();
+        $executor
+            ->expects($this->at(1))
+            ->method('execute')
+            ->with($this->equalTo($expectedCommand))
+            ->will($this->returnValue(0));
+
+        $nmap = new Nmap($executor, $outputFile);
+        $hosts = $nmap->setTcpSynHostDiscovery(80)->scan(array('williamdurand.fr'));
+    }
+	
     /**
      * @expectedException \InvalidArgumentException
      */
